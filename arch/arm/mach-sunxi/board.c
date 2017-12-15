@@ -235,8 +235,10 @@ uint32_t sunxi_get_boot_device(void)
 	 * binary over USB. If it is found, it determines where SPL was
 	 * read from.
 	 */
-	if (!is_boot0_magic(SPL_ADDR + 4)) /* eGON.BT0 */
+	if (!is_boot0_magic(SPL_ADDR + 4)) /* eGON.BT0 */ {
+		return BOOT_DEVICE_NAND;
 		return BOOT_DEVICE_BOARD;
+	}
 
 	boot_source = readb(SPL_ADDR + 0x28);
 	switch (boot_source) {
