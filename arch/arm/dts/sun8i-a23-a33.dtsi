@@ -289,6 +289,24 @@
 				function = "uart1";
 			};
 
+			nand_pins_a: nand-base0@0 {
+				allwinner,pins = "PC0", "PC1", "PC2",
+                                "PC5", "PC8", "PC9", "PC10",
+                                "PC11", "PC12", "PC13", "PC14",
+                                "PC15";
+				allwinner,function = "nand0";
+			};
+
+			nand_cs0_pins_a: nand-cs@0 {
+				allwinner,pins = "PC4";
+				allwinner,function = "nand0";
+			};
+
+			nand_rb0_pins_a: nand-rb@0 {
+				allwinner,pins = "PC6";
+				allwinner,function = "nand0";
+			};
+
 			mmc0_pins_a: mmc0@0 {
 				pins = "PF0", "PF1", "PF2",
 				       "PF3", "PF4", "PF5";
