@@ -135,6 +135,8 @@
 &spi0 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&spi_cs1_pins>, <&spi_cs2_pins>, <&spi_cs3_pins>;
+	clock-frequency = <20000000>;
+	spi-max-frequency = <20000000>;
 	status = "okay";
 
 	spi-flash@0 {
@@ -142,14 +144,14 @@
 		#size-cells = <1>;
 		compatible = "st,m25p128", "spi-flash";
 		reg = <0>; /* Chip select 0 */
-		spi-max-frequency = <50000000>;
+		spi-max-frequency = <5000000>;
 		m25p,fast-read;
 	};
 
 	tpm@1 {
 		compatible = "st,st33tphf20-spi";
 		reg = <2>; /* Chip select 2 */
-		spi-max-frequency = <10000000>;
+		spi-max-frequency = <1000000>;
 	};
 };
 
