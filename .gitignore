@@ -85,3 +85,12 @@ GTAGS
 *.orig
 *~
 \#*#
+
+scripts/dtc/dtc
+scripts/dtc/dtc-lexer.lex.c
+scripts/dtc/dtc-parser.tab.c
+scripts/dtc/dtc-parser.tab.h
+tools/env/embedded.c
+tools/_libfdt.so
+tools/libfdt.py
+tools/libfdt_wrap.c
