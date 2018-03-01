@@ -22,9 +22,8 @@ DECLARE_GLOBAL_DATA_PTR;
 #define MVEBU_SPI_A3700_CLK_POL			BIT(7)
 #define MVEBU_SPI_A3700_FIFO_EN			BIT(17)
 #define MVEBU_SPI_A3700_SPI_EN_0		BIT(16)
-#define MVEBU_SPI_A3700_CLK_PRESCALE_BIT	0
-#define MVEBU_SPI_A3700_CLK_PRESCALE_MASK	\
-	(0x1f << MVEBU_SPI_A3700_CLK_PRESCALE_BIT)
+#define MVEBU_SPI_A3700_CLK_PRESCALE_MASK	GENMASK(5, 0)
+#define MVEBU_SPI_A3700_CLK_EVEN_OFFS		BIT(4)
 
 /* SPI registers */
 struct spi_reg {
@@ -178,19 +177,29 @@ static int mvebu_spi_set_speed(struct udevice *bus, uint hz)
 {
 	struct mvebu_spi_platdata *plat = dev_get_platdata(bus);
 	struct spi_reg *reg = plat->spireg;
-	u32 data;
+	u32 cfg_reg;
+	unsigned int prescaler;
 
-	data = readl(&reg->cfg);
-
-	/* Set Prescaler */
-	data &= ~MVEBU_SPI_A3700_CLK_PRESCALE_MASK;
+	cfg_reg = readl(&reg->cfg);
 
 	/* Calculate Prescaler = (spi_input_freq / spi_max_freq) */
 	if (hz > plat->frequency)
 		hz = plat->frequency;
-	data |= plat->clock / hz;
 
-	writel(data, &reg->cfg);
+	prescaler = plat->clock / hz;
+
+	/* Cannot divide by more than 30 the SPI clock */
+	if (prescaler > 30)
+		prescaler = 30;
+
+	/* Only even numbers are available between 15 and 30 */
+	if (prescaler > 15) {
+		prescaler = DIV_ROUND_UP(prescaler, 2);
+		prescaler |= MVEBU_SPI_A3700_CLK_EVEN_OFFS;
+	}
+
+	writel((cfg_reg & ~MVEBU_SPI_A3700_CLK_PRESCALE_MASK) |
+	       prescaler, &reg->cfg);
 
 	return 0;
 }
