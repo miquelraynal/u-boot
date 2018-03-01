@@ -47,6 +47,7 @@
 
 /dts-v1/;
 
+#include <dt-bindings/gpio/gpio.h>
 #include "armada-372x.dtsi"
 
 / {
@@ -67,6 +68,31 @@
 		device_type = "memory";
 		reg = <0x00000000 0x00000000 0x00000000 0x20000000>;
 	};
+
+	/*
+	soft-spi {
+		compatible = "spi-gpio";
+		pinctrl-names = "default";
+		pinctrl-0 = <&soft_spi_pins>;
+		status = "okay";
+//		cs-gpios = <&gpionb 11 GPIO_ACTIVE_HIGH>;
+//		gpio-sck = <&gpionb 12 GPIO_ACTIVE_HIGH>;
+//		gpio-mosi = <&gpionb 13 GPIO_ACTIVE_HIGH>;
+//		gpio-miso = <&gpionb 14 GPIO_ACTIVE_HIGH>;
+		cs-gpios = <&gpionb 5 GPIO_ACTIVE_HIGH>; // ne bouge pas
+		gpio-sck = <&gpionb 9 GPIO_ACTIVE_HIGH>; // fonctionne avec le spi
+		gpio-mosi = <&gpionb 10 GPIO_ACTIVE_HIGH>; // fonctionne en gpio mais pas en spi
+		gpio-miso = <&gpionb 14 GPIO_ACTIVE_HIGH>;
+		spi-delay-us = <1>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		tpm@0 {
+			reg = <0>;
+			compatible = "infineon,slb9670";
+		};
+	};
+*/
 };
 
 &comphy {
@@ -107,6 +133,8 @@
 };
 
 &spi0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&spi_cs1_pins>, <&spi_cs2_pins>, <&spi_cs3_pins>;
 	status = "okay";
 
 	spi-flash@0 {
@@ -116,6 +144,12 @@
 		reg = <0>; /* Chip select 0 */
 		spi-max-frequency = <50000000>;
 		m25p,fast-read;
+	};
+
+	tpm@1 {
+		compatible = "st,st33tphf20-spi";
+		reg = <2>; /* Chip select 2 */
+		spi-max-frequency = <10000000>;
 	};
 };
 

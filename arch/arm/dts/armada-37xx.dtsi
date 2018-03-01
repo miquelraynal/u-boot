@@ -135,6 +135,27 @@
 					function = "spi";
 				};
 
+/*				soft_spi_pins: soft-spi-pins {
+					groups = "sdio0";
+					function = "gpio";
+				};
+*/
+
+				spi_cs1_pins: spi-cs1-pins {
+					groups = "spi_cs1";
+					function = "spi";
+				};
+
+				spi_cs2_pins: spi-cs2-pins {
+					groups = "spi_cs2";
+					function = "spi";
+				};
+
+				spi_cs3_pins: spi-cs3-pins {
+					groups = "spi_cs3";
+					function = "spi";
+				};
+
 				i2c1_pins: i2c1-pins {
 					groups = "i2c1";
 					function = "i2c";
