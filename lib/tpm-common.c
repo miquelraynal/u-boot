@@ -154,6 +154,7 @@ u32 tpm_sendrecv_command(const void *command, void *response, size_t *size_ptr)
 	int err, ret;
 	u8 response_buffer[COMMAND_BUFFER_SIZE];
 	size_t response_length;
+	int i;
 
 	if (response) {
 		response_length = *size_ptr;
@@ -173,7 +174,14 @@ u32 tpm_sendrecv_command(const void *command, void *response, size_t *size_ptr)
 	if (size_ptr)
 		*size_ptr = response_length;
 
-	return tpm_return_code(response);
+	ret = tpm_return_code(response);
+
+	log(LOGC_NONE, LOGL_DEBUG, "TPM response [ret:%d]: ", ret);
+	for (i = 0; i < response_length; i++)
+		log(LOGC_NONE, LOGL_DEBUG, "%02x ", ((u8 *)response)[i]);
+	log(LOGC_NONE, LOGL_DEBUG, "\n");
+
+	return ret;
 }
 
 int tpm_init(void)
