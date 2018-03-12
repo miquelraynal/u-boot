@@ -10,7 +10,9 @@
 
 /* Onboard devices */
 
+#define CONFIG_MSCC_ESWITCH
 #define CONFIG_SYS_MALLOC_LEN		0xF0000
+
 #define CONFIG_SYS_LOAD_ADDR		0x00100000
 #define CONFIG_SYS_INIT_SP_OFFSET       0x400000
 

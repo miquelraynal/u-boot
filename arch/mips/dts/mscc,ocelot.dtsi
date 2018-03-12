@@ -106,6 +106,14 @@
 			status = "disabled";
 		};
 
+		ethernet: ethernet@1000000 {
+			compatible = "mscc,eswitch-ocelot";
+			reg = <0x1000000 0x1000>;
+			status = "disabled";
+			#address-cells = <1>;
+			#size-cells = <0>;
+		};
+
 		reset@1070008 {
 			compatible = "mscc,ocelot-chip-reset";
 			reg = <0x1070008 0x4>;
