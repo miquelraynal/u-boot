@@ -31,3 +31,7 @@
                 reg = <0>; /* CS0 */
 	};
 };
+
+&ethernet {
+	status = "okay";
+};
