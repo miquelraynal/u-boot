@@ -238,6 +238,10 @@
 		compatible = "google,sandbox-tpm";
 	};
 
+	tpm2 {
+		compatible = "sandbox,tpm2";
+	};
+
 	triangle {
 		compatible = "demo-shape";
 		colour = "cyan";
