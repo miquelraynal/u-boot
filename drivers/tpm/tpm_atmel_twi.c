@@ -8,7 +8,7 @@
 
 #include <common.h>
 #include <dm.h>
-#include <tpm.h>
+#include <tpm-v1.h>
 #include <i2c.h>
 #include <asm/unaligned.h>
 
