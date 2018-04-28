@@ -175,6 +175,11 @@
 					groups = "uart2";
 					function = "uart";
 				};
+
+				tpm_reset_pins: tpm-reset-pins {
+					groups = "sdio0";
+					function = "gpio";
+				};
 			};
 
 			pinctrl_sb: pinctrl-sb@18800 {

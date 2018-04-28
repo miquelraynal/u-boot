@@ -148,9 +148,12 @@
 		m25p,fast-read;
 	};
 
-	tpm@1 {
-		compatible = "st,st33tphf20-spi";
+	tpm@2 {
+		pinctrl-names = "default";
+		pinctrl-0 = <&tpm_reset_pins>;
+		compatible = "tis,tpm2-spi";
 		reg = <2>; /* Chip select 2 */
+		gpio-reset = <&gpionb 8 GPIO_ACTIVE_HIGH>;
 		spi-max-frequency = <1000000>;
 	};
 };
