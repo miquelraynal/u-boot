@@ -25,7 +25,7 @@ enum {
  * @param data		byte string to be printed
  * @param count		number of bytes to be printed
  */
-static void print_byte_string(uint8_t *data, size_t count)
+static void print_byte_string(u8 *data, size_t count)
 {
 	int i, print_newline = 0;
 
@@ -52,7 +52,7 @@ static void print_byte_string(uint8_t *data, size_t count)
  * @param count_ptr	output variable for the length of byte string
  * @return pointer to output buffer
  */
-static void *parse_byte_string(char *bytes, uint8_t *data, size_t *count_ptr)
+static void *parse_byte_string(char *bytes, u8 *data, size_t *count_ptr)
 {
 	char byte[3];
 	size_t count, length;
@@ -72,7 +72,7 @@ static void *parse_byte_string(char *bytes, uint8_t *data, size_t *count_ptr)
 	for (i = 0; i < length; i += 2) {
 		byte[0] = bytes[i];
 		byte[1] = bytes[i + 1];
-		data[i / 2] = (uint8_t)simple_strtoul(byte, NULL, 16);
+		data[i / 2] = (u8)simple_strtoul(byte, NULL, 16);
 	}
 
 	if (count_ptr)
@@ -146,7 +146,7 @@ static size_t type_string_get_space_size(const char *type_str)
  * @param count		pointer for storing size of buffer
  * @return pointer to buffer or NULL on error
  */
-static void *type_string_alloc(const char *type_str, uint32_t *count)
+static void *type_string_alloc(const char *type_str, u32 *count)
 {
 	void *data;
 	size_t size;
@@ -171,10 +171,10 @@ static void *type_string_alloc(const char *type_str, uint32_t *count)
  * @return 0 on success, non-0 on error
  */
 static int type_string_pack(const char *type_str, char * const values[],
-		uint8_t *data)
+			    u8 *data)
 {
 	size_t offset;
-	uint32_t value;
+	u32 value;
 
 	for (offset = 0; *type_str; type_str++, values++) {
 		value = simple_strtoul(values[0], NULL, 0);
@@ -208,11 +208,11 @@ static int type_string_pack(const char *type_str, char * const values[],
  * @param vars		names of environment variables
  * @return 0 on success, non-0 on error
  */
-static int type_string_write_vars(const char *type_str, uint8_t *data,
-		char * const vars[])
+static int type_string_write_vars(const char *type_str, u8 *data,
+				  char * const vars[])
 {
 	size_t offset;
-	uint32_t value;
+	u32 value;
 
 	for (offset = 0; *type_str; type_str++, vars++) {
 		switch (*type_str) {
@@ -262,7 +262,7 @@ static int do_tpm_startup(cmd_tbl_t *cmdtp, int flag,
 static int do_tpm_nv_define_space(cmd_tbl_t *cmdtp, int flag,
 		int argc, char * const argv[])
 {
-	uint32_t index, perm, size;
+	u32 index, perm, size;
 
 	if (argc != 4)
 		return CMD_RET_USAGE;
@@ -276,7 +276,7 @@ static int do_tpm_nv_define_space(cmd_tbl_t *cmdtp, int flag,
 static int do_tpm_nv_read_value(cmd_tbl_t *cmdtp, int flag,
 		int argc, char * const argv[])
 {
-	uint32_t index, count, rc;
+	u32 index, count, rc;
 	void *data;
 
 	if (argc != 4)
@@ -297,7 +297,7 @@ static int do_tpm_nv_read_value(cmd_tbl_t *cmdtp, int flag,
 static int do_tpm_nv_write_value(cmd_tbl_t *cmdtp, int flag,
 		int argc, char * const argv[])
 {
-	uint32_t index, rc;
+	u32 index, rc;
 	size_t count;
 	void *data;
 
@@ -319,8 +319,8 @@ static int do_tpm_nv_write_value(cmd_tbl_t *cmdtp, int flag,
 static int do_tpm_extend(cmd_tbl_t *cmdtp, int flag,
 		int argc, char * const argv[])
 {
-	uint32_t index, rc;
-	uint8_t in_digest[20], out_digest[20];
+	u32 index, rc;
+	u8 in_digest[20], out_digest[20];
 
 	if (argc != 3)
 		return CMD_RET_USAGE;
@@ -342,7 +342,7 @@ static int do_tpm_extend(cmd_tbl_t *cmdtp, int flag,
 static int do_tpm_pcr_read(cmd_tbl_t *cmdtp, int flag,
 		int argc, char * const argv[])
 {
-	uint32_t index, count, rc;
+	u32 index, count, rc;
 	void *data;
 
 	if (argc != 4)
@@ -363,11 +363,11 @@ static int do_tpm_pcr_read(cmd_tbl_t *cmdtp, int flag,
 static int do_tpm_tsc_physical_presence(cmd_tbl_t *cmdtp, int flag,
 		int argc, char * const argv[])
 {
-	uint16_t presence;
+	u16 presence;
 
 	if (argc != 2)
 		return CMD_RET_USAGE;
-	presence = (uint16_t)simple_strtoul(argv[1], NULL, 0);
+	presence = (u16)simple_strtoul(argv[1], NULL, 0);
 
 	return report_return_code(tpm_tsc_physical_presence(presence));
 }
@@ -375,7 +375,7 @@ static int do_tpm_tsc_physical_presence(cmd_tbl_t *cmdtp, int flag,
 static int do_tpm_read_pubek(cmd_tbl_t *cmdtp, int flag,
 		int argc, char * const argv[])
 {
-	uint32_t count, rc;
+	u32 count, rc;
 	void *data;
 
 	if (argc != 3)
@@ -395,11 +395,11 @@ static int do_tpm_read_pubek(cmd_tbl_t *cmdtp, int flag,
 static int do_tpm_physical_set_deactivated(cmd_tbl_t *cmdtp, int flag,
 		int argc, char * const argv[])
 {
-	uint8_t state;
+	u8 state;
 
 	if (argc != 2)
 		return CMD_RET_USAGE;
-	state = (uint8_t)simple_strtoul(argv[1], NULL, 0);
+	state = (u8)simple_strtoul(argv[1], NULL, 0);
 
 	return report_return_code(tpm_physical_set_deactivated(state));
 }
@@ -407,7 +407,7 @@ static int do_tpm_physical_set_deactivated(cmd_tbl_t *cmdtp, int flag,
 static int do_tpm_get_capability(cmd_tbl_t *cmdtp, int flag,
 		int argc, char * const argv[])
 {
-	uint32_t cap_area, sub_cap, rc;
+	u32 cap_area, sub_cap, rc;
 	void *cap;
 	size_t count;
 
@@ -481,9 +481,9 @@ static int do_tpm_raw_transfer(cmd_tbl_t *cmdtp, int flag,
 {
 	struct udevice *dev;
 	void *command;
-	uint8_t response[1024];
+	u8 response[1024];
 	size_t count, response_length = sizeof(response);
-	uint32_t rc;
+	u32 rc;
 
 	command = parse_byte_string(argv[1], NULL, &count);
 	if (!command) {
@@ -508,7 +508,7 @@ static int do_tpm_raw_transfer(cmd_tbl_t *cmdtp, int flag,
 static int do_tpm_nv_define(cmd_tbl_t *cmdtp, int flag,
 		int argc, char * const argv[])
 {
-	uint32_t index, perm, size;
+	u32 index, perm, size;
 
 	if (argc != 4)
 		return CMD_RET_USAGE;
@@ -526,7 +526,7 @@ static int do_tpm_nv_define(cmd_tbl_t *cmdtp, int flag,
 static int do_tpm_nv_read(cmd_tbl_t *cmdtp, int flag,
 		int argc, char * const argv[])
 {
-	uint32_t index, count, err;
+	u32 index, count, err;
 	void *data;
 
 	if (argc < 3)
@@ -555,7 +555,7 @@ static int do_tpm_nv_read(cmd_tbl_t *cmdtp, int flag,
 static int do_tpm_nv_write(cmd_tbl_t *cmdtp, int flag,
 		int argc, char * const argv[])
 {
-	uint32_t index, count, err;
+	u32 index, count, err;
 	void *data;
 
 	if (argc < 3)
@@ -585,7 +585,7 @@ static int do_tpm_nv_write(cmd_tbl_t *cmdtp, int flag,
 static int do_tpm_oiap(cmd_tbl_t *cmdtp, int flag,
 		int argc, char * const argv[])
 {
-	uint32_t auth_handle, err;
+	u32 auth_handle, err;
 
 	err = tpm_oiap(&auth_handle);
 
@@ -596,10 +596,10 @@ static int do_tpm_oiap(cmd_tbl_t *cmdtp, int flag,
 static int do_tpm_load_key_by_sha1(cmd_tbl_t *cmdtp, int flag, int argc, char *
 				   const argv[])
 {
-	uint32_t parent_handle = 0;
-	uint32_t key_len, key_handle, err;
-	uint8_t usage_auth[DIGEST_LENGTH];
-	uint8_t parent_hash[DIGEST_LENGTH];
+	u32 parent_handle = 0;
+	u32 key_len, key_handle, err;
+	u8 usage_auth[DIGEST_LENGTH];
+	u8 parent_hash[DIGEST_LENGTH];
 	void *key;
 
 	if (argc < 5)
@@ -634,8 +634,8 @@ static int do_tpm_load_key_by_sha1(cmd_tbl_t *cmdtp, int flag, int argc, char *
 static int do_tpm_load_key2_oiap(cmd_tbl_t *cmdtp, int flag,
 		int argc, char * const argv[])
 {
-	uint32_t parent_handle, key_len, key_handle, err;
-	uint8_t usage_auth[DIGEST_LENGTH];
+	u32 parent_handle, key_len, key_handle, err;
+	u8 usage_auth[DIGEST_LENGTH];
 	void *key;
 
 	if (argc < 5)
@@ -659,9 +659,9 @@ static int do_tpm_load_key2_oiap(cmd_tbl_t *cmdtp, int flag,
 static int do_tpm_get_pub_key_oiap(cmd_tbl_t *cmdtp, int flag,
 		int argc, char * const argv[])
 {
-	uint32_t key_handle, err;
-	uint8_t usage_auth[DIGEST_LENGTH];
-	uint8_t pub_key_buffer[TPM_PUBKEY_MAX_LENGTH];
+	u32 key_handle, err;
+	u8 usage_auth[DIGEST_LENGTH];
+	u8 pub_key_buffer[TPM_PUBKEY_MAX_LENGTH];
 	size_t pub_key_len = sizeof(pub_key_buffer);
 
 	if (argc < 3)
@@ -721,9 +721,9 @@ static int do_tpm_flush(cmd_tbl_t *cmdtp, int flag, int argc,
 	}
 
 	if (!strcasecmp(argv[2], "all")) {
-		uint16_t res_count;
-		uint8_t buf[288];
-		uint8_t *ptr;
+		u16 res_count;
+		u8 buf[288];
+		u8 *ptr;
 		int err;
 		uint i;
 
@@ -739,7 +739,7 @@ static int do_tpm_flush(cmd_tbl_t *cmdtp, int flag, int argc,
 		for (i = 0; i < res_count; ++i, ptr += 4)
 			tpm_flush_specific(get_unaligned_be32(ptr), type);
 	} else {
-		uint32_t handle = simple_strtoul(argv[2], NULL, 0);
+		u32 handle = simple_strtoul(argv[2], NULL, 0);
 
 		if (!handle) {
 			printf("Illegal resource handle %s\n", argv[2]);
@@ -757,9 +757,9 @@ static int do_tpm_list(cmd_tbl_t *cmdtp, int flag, int argc,
 		       char * const argv[])
 {
 	int type = 0;
-	uint16_t res_count;
-	uint8_t buf[288];
-	uint8_t *ptr;
+	u16 res_count;
+	u8 buf[288];
+	u8 *ptr;
 	int err;
 	uint i;
 
