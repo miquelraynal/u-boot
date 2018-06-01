@@ -273,6 +273,11 @@ config LZO
 	help
 	  This enables support for LZO compression algorithm.r
 
+config XZ
+	bool "Enable XZ(LZMA2) decompression support"
+	help
+	  This enables support for XZ (aka LZMA2)
+
 config SPL_LZO
 	bool "Enable LZO decompression support in SPL"
 	help
