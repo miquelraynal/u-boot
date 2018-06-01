@@ -217,6 +217,13 @@ config CMD_BOOTI
 	help
 	  Boot an AArch64 Linux Kernel image from memory.
 
+config CMD_BOOTMFI
+	bool "bootmfi"
+	depends on SOC_VCOREIII
+	default y
+	help
+	  Boot an MFI image from memory.
+
 config CMD_BOOTEFI
 	bool "bootefi"
 	depends on EFI_LOADER
