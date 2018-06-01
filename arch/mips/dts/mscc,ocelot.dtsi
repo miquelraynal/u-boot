@@ -135,6 +135,26 @@
 				pins = "GPIO_12", "GPIO_13";
 				function = "uart2";
 			};
+
+			spi_cs1_pin: spi-cs1-pin {
+				pins = "GPIO_8";
+				function = "si";
+			};
+
+			spi_cs2_pin: spi-cs2-pin {
+				pins = "GPIO_9";
+				function = "si";
+			};
+
+			spi_cs3_pin: spi-cs3-pin {
+				pins = "GPIO_16";
+				function = "si";
+			};
+
+			spi_cs4_pin: spi-cs4-pin {
+				pins = "GPIO_17";
+				function = "si";
+			};
 		};
 	};
 };
