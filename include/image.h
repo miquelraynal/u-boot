@@ -294,6 +294,7 @@ enum {
 	IH_COMP_LZMA,			/* lzma  Compression Used	*/
 	IH_COMP_LZO,			/* lzo   Compression Used	*/
 	IH_COMP_LZ4,			/* lz4   Compression Used	*/
+	IH_COMP_XZ,			/* xz    Compression Used	*/
 
 	IH_COMP_COUNT,
 };
