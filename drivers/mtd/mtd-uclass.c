@@ -6,6 +6,7 @@
 
 #include <common.h>
 #include <dm.h>
+#include <dm/device-internal.h>
 #include <errno.h>
 #include <mtd.h>
 
@@ -13,6 +14,14 @@
  * Implement a MTD uclass which should include most flash drivers.
  * The uclass private is pointed to mtd_info.
  */
+
+int mtd_probe(struct udevice *dev)
+{
+	if (device_active(dev))
+		return 0;
+
+	return device_probe(dev);
+}
 
 UCLASS_DRIVER(mtd) = {
 	.id		= UCLASS_MTD,
