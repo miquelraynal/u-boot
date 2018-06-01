@@ -18,6 +18,7 @@
 #include <lzma/LzmaTypes.h>
 #include <lzma/LzmaDec.h>
 #include <lzma/LzmaTools.h>
+#include <linux/xz.h>
 #if defined(CONFIG_CMD_USB)
 #include <usb.h>
 #endif
@@ -428,6 +429,17 @@ int bootm_decomp_image(int comp, ulong load, ulong image_start, int type,
 		break;
 	}
 #endif /* CONFIG_LZ4 */
+#ifdef CONFIG_XZ
+	case IH_COMP_XZ: {
+		int in_used = unc_len;
+
+		ret = unxz(
+			(unsigned char *)image_start, image_len, 0, 0,
+			(unsigned char *)load, &in_used, puts);
+		image_len = in_used;
+		break;
+	}
+#endif /* CONFIG_XZ */
 	default:
 		printf("Unimplemented compression type %d\n", comp);
 		return BOOTM_ERR_UNIMPLEMENTED;
