@@ -15,6 +15,11 @@ DECLARE_GLOBAL_DATA_PTR;
 #define	LINUX_MAX_ENVS		256
 #define	LINUX_MAX_ARGS		256
 
+enum legacy_boot_type {
+	LEGACY_BOOT_YAML,
+	LEGACY_BOOT_VCORE,
+};
+
 static int linux_argc;
 static char **linux_argv;
 static char *linux_argp;
@@ -44,22 +49,46 @@ void arch_lmb_reserve(struct lmb *lmb)
 	lmb_reserve(lmb, sp, gd->ram_top - sp);
 }
 
-static void linux_cmdline_init(void)
+static void linux_cmdline_init(enum legacy_boot_type boot_type)
 {
+	switch (boot_type) {
+		/*
+		 * Vcore III linux kernels expect arguments in the cached
+		 * address space. They also expect the command line being a
+		 * single string in the first argument
+		 */
+	case LEGACY_BOOT_VCORE:
+		linux_argv = (char **)(gd->bd->bi_boot_params);
+		linux_argp = (char *)(linux_argv + LINUX_MAX_ARGS);
+		linux_argv[1] = linux_argp;
+		break;
+	case LEGACY_BOOT_YAML:
+	/* fallthrough */
+	default:
+		linux_argv = (char **)UNCACHED_SDRAM(gd->bd->bi_boot_params);
+		linux_argp = (char *)(linux_argv + LINUX_MAX_ARGS);
+	}
 	linux_argc = 1;
-	linux_argv = (char **)UNCACHED_SDRAM(gd->bd->bi_boot_params);
 	linux_argv[0] = 0;
-	linux_argp = (char *)(linux_argv + LINUX_MAX_ARGS);
 }
 
-static void linux_cmdline_set(const char *value, size_t len)
+static void linux_cmdline_set(const char *value, size_t len,
+			      enum legacy_boot_type boot_type)
 {
-	linux_argv[linux_argc] = linux_argp;
 	memcpy(linux_argp, value, len);
-	linux_argp[len] = 0;
-
+	switch (boot_type) {
+	case LEGACY_BOOT_VCORE:
+		linux_argv[linux_argc] = linux_argp;
+		linux_argp[len] = 0;
+		linux_argc++;
+	case LEGACY_BOOT_YAML:
+		/* fallthrough */
+	default:
+		linux_argp[len] = ' ';
+		linux_argp[len + 1] = 0;
+		linux_argc = 2;
+	}
 	linux_argp += len + 1;
-	linux_argc++;
 }
 
 static void linux_cmdline_dump(void)
@@ -73,12 +102,11 @@ static void linux_cmdline_dump(void)
 		debug("   arg %03d: %s\n", i, linux_argv[i]);
 }
 
-static void linux_cmdline_legacy(bootm_headers_t *images)
+static void linux_cmdline_legacy(bootm_headers_t *images,
+				 enum legacy_boot_type boot_type)
 {
 	const char *bootargs, *next, *quote;
-
-	linux_cmdline_init();
-
+	linux_cmdline_init(boot_type);
 	bootargs = env_get("bootargs");
 	if (!bootargs)
 		return;
@@ -104,7 +132,7 @@ static void linux_cmdline_legacy(bootm_headers_t *images)
 		if (!next)
 			next = bootargs + strlen(bootargs);
 
-		linux_cmdline_set(bootargs, next - bootargs);
+		linux_cmdline_set(bootargs, next - bootargs, boot_type);
 
 		if (*next)
 			next++;
@@ -113,7 +141,8 @@ static void linux_cmdline_legacy(bootm_headers_t *images)
 	}
 }
 
-static void linux_cmdline_append(bootm_headers_t *images)
+static void linux_cmdline_append(bootm_headers_t *images,
+				 enum legacy_boot_type boot_type)
 {
 	char buf[24];
 	ulong mem, rd_start, rd_size;
@@ -121,7 +150,7 @@ static void linux_cmdline_append(bootm_headers_t *images)
 	/* append mem */
 	mem = gd->ram_size >> 20;
 	sprintf(buf, "mem=%luM", mem);
-	linux_cmdline_set(buf, strlen(buf));
+	linux_cmdline_set(buf, strlen(buf), boot_type);
 
 	/* append rd_start and rd_size */
 	rd_start = images->initrd_start;
@@ -129,9 +158,13 @@ static void linux_cmdline_append(bootm_headers_t *images)
 
 	if (rd_size) {
 		sprintf(buf, "rd_start=0x%08lX", rd_start);
-		linux_cmdline_set(buf, strlen(buf));
+		linux_cmdline_set(buf, strlen(buf), boot_type);
 		sprintf(buf, "rd_size=0x%lX", rd_size);
-		linux_cmdline_set(buf, strlen(buf));
+		linux_cmdline_set(buf, strlen(buf), boot_type);
+		if (boot_type ==  LEGACY_BOOT_VCORE) {
+			sprintf(buf, "root=/dev/ram0");
+			linux_cmdline_set(buf, strlen(buf), boot_type);
+		}
 	}
 }
 
@@ -276,11 +309,15 @@ static void boot_prep_linux(bootm_headers_t *images)
 		boot_reloc_fdt(images);
 		boot_setup_fdt(images);
 	} else {
-		if (CONFIG_IS_ENABLED(MIPS_BOOT_CMDLINE_LEGACY)) {
-			linux_cmdline_legacy(images);
+		if (CONFIG_IS_ENABLED(SOC_VCOREIII)) {
+			linux_cmdline_legacy(images, LEGACY_BOOT_VCORE);
+			linux_cmdline_append(images, LEGACY_BOOT_VCORE);
+			linux_cmdline_dump();
+		} else if (CONFIG_IS_ENABLED(MIPS_BOOT_CMDLINE_LEGACY)) {
+			linux_cmdline_legacy(images, 0);
 
 			if (!CONFIG_IS_ENABLED(MIPS_BOOT_ENV_LEGACY))
-				linux_cmdline_append(images);
+				linux_cmdline_append(images, LEGACY_BOOT_YAML);
 
 			linux_cmdline_dump();
 		}
