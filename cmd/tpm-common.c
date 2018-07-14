@@ -273,12 +273,34 @@ int do_tpm_init(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 int do_tpm(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	cmd_tbl_t *tpm_commands, *cmd;
+	struct tpm_chip_priv *priv;
+	struct udevice *dev;
 	unsigned int size;
+	int rc;
 
 	if (argc < 2)
 		return CMD_RET_USAGE;
 
-	tpm_commands = get_tpm_commands(&size);
+	rc = get_tpm(&dev);
+	if (rc)
+		return rc;
+
+	priv = dev_get_uclass_priv(dev);
+
+	switch (priv->version) {
+#if defined(CONFIG_TPM_V1)
+	case TPM_V1:
+		tpm_commands = get_tpm1_commands(&size);
+		break;
+#endif
+#if defined(CONFIG_TPM_V2)
+	case TPM_V2:
+		tpm_commands = get_tpm2_commands(&size);
+		break;
+#endif
+	default:
+		return CMD_RET_USAGE;
+	}
 
 	cmd = find_cmd_tbl(argv[1], tpm_commands, size);
 	if (!cmd)

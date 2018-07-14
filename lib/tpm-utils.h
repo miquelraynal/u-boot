@@ -19,6 +19,15 @@
 #define tpm_u32(x) tpm_u16((x) >> 16), tpm_u16((x) & 0xFFFF)
 
 /**
+ * tpm_open() - Request the driver to set the TPM version it uses
+ *
+ * This must be done first. By default, TPM v1 stack is used.
+ *
+ * Returns 0 on success, a negative error otherwise.
+ */
+int tpm_set_version(struct udevice *dev);
+
+/**
  * tpm_open() - Request access to locality 0 for the caller
  *
  * After all commands have been completed the caller is supposed to

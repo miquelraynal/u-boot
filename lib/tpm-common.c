@@ -193,5 +193,9 @@ int tpm_init(void)
 	if (err)
 		return err;
 
+	err = tpm_set_version(dev);
+	if (err)
+		return err;
+
 	return tpm_open(dev);
 }

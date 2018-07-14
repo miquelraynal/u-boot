@@ -573,6 +573,16 @@ static int sandbox_tpm2_get_desc(struct udevice *dev, char *buf, int size)
 	return snprintf(buf, size, "Sandbox TPM2.x");
 }
 
+static int sandbox_tpm2_set_version(struct udevice *dev)
+{
+	struct tpm_chip_priv *priv = dev_get_uclass_priv(dev);
+
+	/* Use the TPM v2 stack */
+	priv->version = TPM_V2;
+
+	return 0;
+}
+
 static int sandbox_tpm2_open(struct udevice *dev)
 {
 	struct sandbox_tpm2 *tpm = dev_get_priv(dev);
@@ -604,6 +614,7 @@ static int sandbox_tpm2_close(struct udevice *dev)
 }
 
 static const struct tpm_ops sandbox_tpm2_ops = {
+	.set_version	= sandbox_tpm2_set_version,
 	.open		= sandbox_tpm2_open,
 	.close		= sandbox_tpm2_close,
 	.get_desc	= sandbox_tpm2_get_desc,

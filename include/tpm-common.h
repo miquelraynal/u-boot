@@ -27,26 +27,39 @@ enum tpm_duration {
 #define TPM_DEV_BUFSIZE		1260
 
 /**
+ * enum tpm_version - The version of the TPM stack to be used
+ * @TPM_V1:		Use TPM v1.x stack
+ * @TPM_V2:		Use TPM v2.x stack
+ */
+enum tpm_version {
+	TPM_V1 = 0,
+	TPM_V2,
+};
+
+/**
  * struct tpm_chip_priv - Information about a TPM, stored by the uclass
  *
  * These values must be set up by the device's probe() method before
  * communcation is attempted. If the device has an xfer() method, this is
  * not needed. There is no need to set up @buf.
  *
+ * @version:		TPM stack to be used
  * @duration_ms:	Length of each duration type in milliseconds
  * @retry_time_ms:	Time to wait before retrying receive
+ * @buf:		Buffer used during the exchanges with the chip
  * @pcr_count:		Number of PCR per bank
  * @pcr_select_min:	Minimum size in bytes of the pcrSelect array
- * @buf:		Buffer used during the exchanges with the chip
  */
 struct tpm_chip_priv {
+	enum tpm_version version;
+
 	uint duration_ms[TPM_DURATION_COUNT];
 	uint retry_time_ms;
-#if defined(CONFIG_TPM_V2)
+	u8 buf[TPM_DEV_BUFSIZE + sizeof(u8)];  /* Max buffer size + addr */
+
+	/* TPM v2 specific data */
 	uint pcr_count;
 	uint pcr_select_min;
-#endif
-	u8 buf[TPM_DEV_BUFSIZE + sizeof(u8)];  /* Max buffer size + addr */
 };
 
 /**
@@ -65,6 +78,16 @@ struct tpm_chip_priv {
  * to bytes which are sent and received.
  */
 struct tpm_ops {
+	/**
+	 * set_version() - Set the right TPM stack version to use
+	 *
+	 * Default is TPM_V1. TPM of newer versions can implement this
+	 * optional hook to set another value.
+	 *
+	 * @dev:	TPM device
+	 */
+	int (*set_version)(struct udevice *dev);
+
 	/**
 	 * open() - Request access to locality 0 for the caller
 	 *
@@ -208,10 +231,11 @@ int tpm_xfer(struct udevice *dev, const u8 *sendbuf, size_t send_size,
 int tpm_init(void);
 
 /**
- * Retrieve the array containing all the commands.
+ * Retrieve the array containing all the v1 (resp. v2) commands.
  *
  * @return a cmd_tbl_t array.
  */
-cmd_tbl_t *get_tpm_commands(unsigned int *size);
+cmd_tbl_t *get_tpm1_commands(unsigned int *size);
+cmd_tbl_t *get_tpm2_commands(unsigned int *size);
 
 #endif /* __TPM_COMMON_H */

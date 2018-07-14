@@ -507,9 +507,23 @@ static int tpm_tis_spi_cleanup(struct udevice *dev)
 	return 0;
 }
 
+static int tpm_tis_spi_set_version(struct udevice *dev)
+{
+	struct tpm_chip_priv *priv = dev_get_uclass_priv(dev);
+
+	/* Use the TPM v2 stack */
+	priv->version = TPM_V2;
+
+	return 0;
+}
+
 static int tpm_tis_spi_open(struct udevice *dev)
 {
 	struct tpm_chip *chip = dev_get_priv(dev);
+	struct tpm_chip_priv *priv = dev_get_uclass_priv(dev);
+
+	/* Use the TPM v2 stack */
+	priv->version = TPM_V2;
 
 	if (chip->is_open)
 		return -EBUSY;
@@ -646,6 +660,7 @@ static int tpm_tis_spi_remove(struct udevice *dev)
 }
 
 static const struct tpm_ops tpm_tis_spi_ops = {
+	.set_version	= tpm_tis_spi_set_version,
 	.open		= tpm_tis_spi_open,
 	.close		= tpm_tis_spi_close,
 	.get_desc	= tpm_tis_get_desc,

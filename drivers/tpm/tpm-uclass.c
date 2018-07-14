@@ -7,12 +7,19 @@
 #include <common.h>
 #include <dm.h>
 #include <linux/unaligned/be_byteshift.h>
-#if defined(CONFIG_TPM_V1)
 #include <tpm-v1.h>
-#elif defined(CONFIG_TPM_V2)
 #include <tpm-v2.h>
-#endif
 #include "tpm_internal.h"
+
+int tpm_set_version(struct udevice *dev)
+{
+	struct tpm_ops *ops = tpm_get_ops(dev);
+
+	if (ops->set_version)
+		return ops->set_version(dev);
+
+	return 0;
+}
 
 int tpm_open(struct udevice *dev)
 {
