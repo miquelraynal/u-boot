@@ -178,7 +178,7 @@ static inline void spi_enable_chip(struct dw_spi_priv *priv, int enable)
 static void spi_hw_init(struct dw_spi_priv *priv)
 {
 	spi_enable_chip(priv, 0);
-	dw_write(priv, DW_SPI_IMR, 0xff);
+	dw_write(priv, DW_SPI_IMR, 0); // WA for mscc kernel 4.9
 	spi_enable_chip(priv, 1);
 
 	/*
