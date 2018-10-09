@@ -23,7 +23,9 @@ int vcoreiii_ddr_init(void)
 		hal_vcoreiii_wait_memctl();
 		if (hal_vcoreiii_init_dqs() != 0 ||
 		    hal_vcoreiii_train_bytelane(0) != 0
+#ifdef CONFIG_SOC_OCELOT
 		    || hal_vcoreiii_train_bytelane(1) != 0
+#endif
 		    )
 			hal_vcoreiii_ddr_failed();
 	}
