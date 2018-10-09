@@ -31,12 +31,25 @@ void vcoreiii_tlb_init(void)
 	 */
 	create_tlb(tlbix++, MSCC_IO_ORIGIN1_OFFSET, SZ_16M, MMU_REGIO_RW,
 		   MMU_REGIO_RW);
+#ifdef CONFIG_SOC_LUTON
+	create_tlb(tlbix++, MSCC_IO_ORIGIN2_OFFSET, SZ_16M, MMU_REGIO_RW,
+		   MMU_REGIO_RW);
+#endif
 }
 
 int mach_cpu_init(void)
 {
 	/* Speed up NOR flash access */
+#ifdef CONFIG_SOC_LUTON
+	writel(ICPU_PI_MST_CFG_TRISTATE_CTRL +
+	       ICPU_PI_MST_CFG_CLK_DIV(4), REG_CFG(ICPU_PI_MST_CFG));
+
+	writel(ICPU_SPI_MST_CFG_FAST_READ_ENA +
+	       ICPU_SPI_MST_CFG_CS_DESELECT_TIME(0x19) +
+	       ICPU_SPI_MST_CFG_CLK_DIV(9), REG_CFG(ICPU_SPI_MST_CFG));
+#else
 	writel(ICPU_SPI_MST_CFG_CS_DESELECT_TIME(0x19) +
 	       ICPU_SPI_MST_CFG_CLK_DIV(9), REG_CFG(ICPU_SPI_MST_CFG));
+#endif
 	return 0;
 }
