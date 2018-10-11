@@ -20,3 +20,6 @@ obj-$(CONFIG_STM32_FLASH) += stm32_flash.o
 obj-$(CONFIG_RENESAS_RPC_HF) += renesas_rpc_hf.o
 
 obj-y += nand/
+obj-y += onenand/
+obj-y += spi/
+obj-$(CONFIG_CMD_UBI) += ubi/
