@@ -49,7 +49,7 @@
 #endif
 #endif
 
-#ifdef CONFIG_NAND
+#ifdef CONFIG_MTD_RAW_NAND
 #ifdef CONFIG_SECURE_BOOT
 #define CONFIG_SPL_INIT_MINIMAL
 #define CONFIG_SPL_FLUSH_IMAGE
@@ -90,7 +90,7 @@
 #endif
 #endif
 
-#ifdef CONFIG_NAND_SECBOOT	/* NAND Boot */
+#ifdef CONFIG_MTD_RAW_NAND_SECBOOT	/* NAND Boot */
 #define CONFIG_RAMBOOT_NAND
 #define CONFIG_RESET_VECTOR_ADDRESS	0x110bfffc
 #endif
@@ -388,7 +388,7 @@ extern unsigned long get_sdram_size(void);
 #define CONFIG_SYS_NAND_DDR_LAW		11
 
 /* Set up IFC registers for boot location NOR/NAND */
-#if defined(CONFIG_NAND) || defined(CONFIG_NAND_SECBOOT)
+#if defined(CONFIG_MTD_RAW_NAND) || defined(CONFIG_MTD_RAW_NAND_SECBOOT)
 #define CONFIG_SYS_CSPR0		CONFIG_SYS_NAND_CSPR
 #define CONFIG_SYS_AMASK0		CONFIG_SYS_NAND_AMASK
 #define CONFIG_SYS_CSOR0		CONFIG_SYS_NAND_CSOR
@@ -484,7 +484,7 @@ extern unsigned long get_sdram_size(void);
 #define CONFIG_SPL_RELOC_MALLOC_ADDR	(CONFIG_SYS_INIT_L2_ADDR + 128 * 1024)
 #define CONFIG_SPL_RELOC_MALLOC_SIZE	(128 << 10)
 #define CONFIG_SPL_GD_ADDR		(CONFIG_SYS_INIT_L2_ADDR + 96 * 1024)
-#elif defined(CONFIG_NAND)
+#elif defined(CONFIG_MTD_RAW_NAND)
 #ifdef CONFIG_TPL_BUILD
 #define CONFIG_SYS_INIT_L2_ADDR		0xD0000000
 #define CONFIG_SYS_INIT_L2_ADDR_PHYS	CONFIG_SYS_INIT_L2_ADDR
@@ -558,7 +558,7 @@ extern unsigned long get_sdram_size(void);
  * SPI interface will not be available in case of NAND boot SPI CS0 will be
  * used for SLIC
  */
-#if !defined(CONFIG_NAND) || !defined(CONFIG_NAND_SECBOOT)
+#if !defined(CONFIG_MTD_RAW_NAND) || !defined(CONFIG_MTD_RAW_NAND_SECBOOT)
 /* eSPI - Enhanced SPI */
 #endif
 
@@ -634,7 +634,7 @@ extern unsigned long get_sdram_size(void);
 #define CONFIG_ENV_OFFSET	0x100000	/* 1MB */
 #define CONFIG_ENV_SECT_SIZE	0x10000
 #define CONFIG_ENV_SIZE		0x2000
-#elif defined(CONFIG_NAND)
+#elif defined(CONFIG_MTD_RAW_NAND)
 #ifdef CONFIG_TPL_BUILD
 #define CONFIG_ENV_SIZE		0x2000
 #define CONFIG_ENV_ADDR		(CONFIG_SYS_INIT_L2_ADDR + (160 << 10))
