@@ -19,7 +19,10 @@ obj-$(CONFIG_ST_SMI) += st_smi.o
 obj-$(CONFIG_STM32_FLASH) += stm32_flash.o
 obj-$(CONFIG_RENESAS_RPC_HF) += renesas_rpc_hf.o
 
+# SPL will manually build the files it needs
+ifeq ($(CONFIG_SPL_BUILD)$(CONFIG_TPL_BUILD),)
 obj-y += nand/
 obj-y += onenand/
 obj-y += spi/
 obj-$(CONFIG_CMD_UBI) += ubi/
+endif
