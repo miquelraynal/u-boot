@@ -137,7 +137,7 @@
 /*
  * Flash & Environment
  */
-#ifdef CONFIG_NAND
+#ifdef CONFIG_MTD_RAW_NAND
 #define CONFIG_ENV_OFFSET		0x0 /* Block 0--not used by bootcode */
 #define CONFIG_ENV_SIZE			(128 << 9)
 #define	CONFIG_SYS_NAND_USE_FLASH_BBT
@@ -248,7 +248,7 @@
 #define CONFIG_CLOCKS
 #endif
 
-#if !defined(CONFIG_NAND) && \
+#if !defined(CONFIG_MTD_RAW_NAND) && \
 	!defined(CONFIG_SYS_USE_NOR) && \
 	!defined(CONFIG_USE_SPIFLASH)
 #define CONFIG_ENV_SIZE		(16 << 10)
