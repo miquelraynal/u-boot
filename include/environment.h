@@ -99,8 +99,8 @@ extern unsigned long nand_env_oob_offset;
 # ifndef CONFIG_ENV_SIZE
 #  error "Need to define CONFIG_ENV_SIZE when using CONFIG_ENV_IS_IN_UBI"
 # endif
-# ifndef CONFIG_CMD_UBI
-#  error "Need to define CONFIG_CMD_UBI when using CONFIG_ENV_IS_IN_UBI"
+# ifndef CONFIG_MTD_UBI
+#  error "Need to define CONFIG_MTD_UBI when using CONFIG_ENV_IS_IN_UBI"
 # endif
 #endif /* CONFIG_ENV_IS_IN_UBI */
 
