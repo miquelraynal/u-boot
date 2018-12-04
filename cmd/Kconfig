@@ -1750,6 +1750,16 @@ config CMD_MTDPARTS
 	  declare the partitions in the mtdparts environment variable
 	  but better use the MTD stack and the 'mtd' command instead.
 
+config CMD_MTDPARTS_SPREAD
+	bool "Padd partition size to take account of bad blocks"
+	depends on CMD_MTDPARTS
+	help
+	  This enables the 'spread' sub-command of the mtdparts command.
+	  This command will modify the existing mtdparts variable by increasing
+	  the size of the partitions such that 1) each partition's net size is
+	  at least as large as the size specified in the mtdparts variable and
+	  2) each partition starts on a good block.
+
 config MTDIDS_DEFAULT
 	string "Default MTD IDs"
 	depends on MTD_PARTITIONS || CMD_MTDPARTS || CMD_NAND || CMD_FLASH
@@ -1763,16 +1773,6 @@ config MTDPARTS_DEFAULT
 	help
 	  Defines a default MTD partitioning scheme in the Linux MTD command
 	  line partitions format
-
-config CMD_MTDPARTS_SPREAD
-	bool "Padd partition size to take account of bad blocks"
-	depends on CMD_MTDPARTS
-	help
-	  This enables the 'spread' sub-command of the mtdparts command.
-	  This command will modify the existing mtdparts variable by increasing
-	  the size of the partitions such that 1) each partition's net size is
-	  at least as large as the size specified in the mtdparts variable and
-	  2) each partition starts on a good block.
 
 config CMD_REISER
 	bool "reiser - Access to reiserfs filesystems"
