@@ -19,6 +19,7 @@ config DM_MTD
 
 config MTD_NOR_FLASH
 	bool "Enable parallel NOR flash support"
+	depends on MTD
 	help
 	  Enable support for parallel NOR flash.
 
